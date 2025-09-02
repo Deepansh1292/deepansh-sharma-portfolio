@@ -30,6 +30,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Configure env for production
+        run: |
+          echo "VITE_GAS_ENDPOINT=${{ secrets.GAS_ENDPOINT }}" > .env.production
+
       - name: Build
         run: npm run build
 

@@ -12,31 +12,52 @@ const Contact: React.FC = () => {
   });
   
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
     setFormStatus('submitting');
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setFormStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
+
+    try {
+      const endpoint = import.meta.env.VITE_GAS_ENDPOINT as string | undefined;
+      if (!endpoint) {
+        throw new Error('Submission endpoint is not configured.');
+      }
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          timestamp: new Date().toISOString(),
+        }),
       });
-      
-      // Reset status after 3 seconds
+
+      if (!response.ok) {
+        throw new Error(`Request failed with ${response.status}`);
+      }
+
+      setFormStatus('success');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+
       setTimeout(() => {
         setFormStatus('idle');
       }, 3000);
-    }, 1500);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Unknown error');
+      setFormStatus('error');
+    }
   };
 
   return (
@@ -210,7 +231,7 @@ const Contact: React.FC = () => {
             
             {formStatus === 'error' && (
               <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-md text-sm">
-                Something went wrong. Please try again later.
+                Something went wrong. Please try again later. {errorMessage ? `(${errorMessage})` : ''}
               </div>
             )}
           </form>
