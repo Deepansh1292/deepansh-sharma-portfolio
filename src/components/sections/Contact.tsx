@@ -30,10 +30,12 @@ const Contact: React.FC = () => {
         throw new Error('Submission endpoint is not configured.');
       }
 
-      const response = await fetch(endpoint, {
+      await fetch(endpoint, {
         method: 'POST',
+        // Use a CORS-safelisted content type and avoid preflight; do not read the response
+        mode: 'no-cors',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'text/plain;charset=utf-8',
         },
         body: JSON.stringify({
           name: formData.name,
@@ -43,10 +45,6 @@ const Contact: React.FC = () => {
           timestamp: new Date().toISOString(),
         }),
       });
-
-      if (!response.ok) {
-        throw new Error(`Request failed with ${response.status}`);
-      }
 
       setFormStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
