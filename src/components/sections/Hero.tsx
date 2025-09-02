@@ -72,7 +72,7 @@ const Hero: React.FC = () => {
           <div className="order-1 lg:order-2 flex justify-center">
             <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-gradient-to-br from-blue-500 to-teal-500 rounded-full overflow-hidden shadow-xl animate-float">
               <img 
-                src="/profile.jpg" 
+                src={`${import.meta.env.BASE_URL}profile.jpg`} 
                 alt="Deepansh Sharma"
                 className="w-full h-full object-cover"
                 style={{ objectPosition: 'center 20%' }}
