@@ -7,4 +7,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  base: "/deepansh-sharma-portfolio/", // 👈 Important for GitHub Pages
 });
